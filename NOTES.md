@@ -25,6 +25,11 @@
 - Highest/lowest chuck values are calculated over the circular chuck face.
 - Center change is `deltaPlane` at `(0, 0)`.
 
+## UI Notes
+
+- Summary cards show unit in the title as `(mm)`.
+- Summary card unit text below the value is hidden to keep the top information row narrow.
+
 ## FSG-2300 Grind1
 
 - Support PCD radius: `120 mm`

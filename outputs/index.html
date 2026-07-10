@@ -218,27 +218,28 @@
 
     .summary {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .metric {
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 12px;
-      min-height: 92px;
+      padding: 8px 10px;
+      min-height: 64px;
       background: #fbfcfa;
     }
 
     .metric .name {
       color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 8px;
+      font-size: 11px;
+      margin-bottom: 6px;
+      white-space: nowrap;
     }
 
     .metric .value {
-      font-size: clamp(20px, 2.5vw, 30px);
+      font-size: clamp(18px, 2vw, 26px);
       font-weight: 800;
       line-height: 1;
       font-variant-numeric: tabular-nums;
@@ -246,9 +247,7 @@
     }
 
     .metric .unit {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
+      display: none;
     }
 
     .up { color: var(--red); }
@@ -1038,6 +1037,23 @@
       }
     }
 
+    function applySummaryLabels() {
+      const labels = {
+        maxUp: "最大升高 (mm)",
+        maxDown: "最大降低 (mm)",
+        centerDelta: "盤中心變化 (mm)",
+        spanDelta: "盤面落差 (mm)",
+        contactMaxDelta: "砂輪弧最高變化 (mm)",
+        t1CgDelta: "T1 CG 變化 (mm)",
+        t2CgDelta: "T2 CG 變化 (mm)"
+      };
+      for (const [id, label] of Object.entries(labels)) {
+        const valueEl = document.getElementById(id);
+        const nameEl = valueEl?.closest(".metric")?.querySelector(".name");
+        if (nameEl) nameEl.textContent = label;
+      }
+    }
+
     document.getElementById("calc").addEventListener("click", calculate);
     document.getElementById("reset").addEventListener("click", () => {
       for (const id of ids) document.getElementById(id).value = defaults[id];
@@ -1063,6 +1079,7 @@
         calculate();
       });
     });
+    applySummaryLabels();
     loadSavedInputs();
     calculate();
   </script>
