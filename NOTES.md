@@ -7,6 +7,7 @@
 - GitHub repo: https://github.com/kevinchen660701-ship-it/InclineCalculate
 - Netlify publish directory: `outputs`
 - Main deployed file: `outputs/index.html`
+- GitHub Pages source: branch `main`, folder `(root)`. Root `index.html` is a copy of `outputs/index.html`.
 - Local repo used for GitHub/Netlify: `C:\Users\kevin.DOMAIN1\Documents\Codex\2026-07-07\new-chat\work\InclineCalculateRepo`
 - Original working HTML copies:
   - `outputs/s2_chuck_plane_calculator.html`
@@ -94,3 +95,5 @@ git push
 ```
 
 Netlify automatically deploys pushes to `main`.
+
+GitHub Pages can be enabled from repo Settings > Pages with `Deploy from a branch`, branch `main`, folder `(root)`.

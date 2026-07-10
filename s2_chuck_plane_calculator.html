@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S2 Chuck 盤面傾角計算器</title>
+  <style>
+    :root {
+      --bg: #f4f5f2;
+      --panel: #ffffff;
+      --ink: #20231f;
+      --muted: #667064;
+      --line: #d9ded5;
+      --brand: #0e6f68;
+      --blue: #2458a7;
+      --red: #b84c2e;
+      --green: #19744c;
+      --shadow: 0 16px 40px rgba(28, 35, 30, .10);
+      font-family: "Microsoft JhengHei", "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, rgba(14, 111, 104, .10), transparent 260px), var(--bg);
+      color: var(--ink);
+    }
+
+    .app {
+      width: min(1280px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 22px 0 32px;
+    }
+
+    header {
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(17px, 1.8vw, 22px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(360px, 460px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .controls,
+    .results {
+      padding: 16px;
+    }
+
+    .section {
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .section-title {
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 9px;
+      color: var(--ink);
+      background: #fbfcfa;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: 2px solid rgba(14, 111, 104, .22);
+      border-color: var(--brand);
+    }
+
+    .geometry {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+      background: #f7f9f5;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
+
+    .geometry strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .option-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand);
+    }
+
+    .diameter-row {
+      display: flex;
+      align-items: end;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .diameter-input {
+      width: 170px;
+    }
+
+    .machine-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .machine-row label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .machine-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand);
+    }
+
+    .machine-divider {
+      width: 1px;
+      align-self: stretch;
+      min-height: 24px;
+      background: var(--line);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      padding-top: 14px;
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 11px 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 42px;
+    }
+
+    .primary {
+      color: white;
+      background: var(--brand);
+    }
+
+    .secondary {
+      color: var(--ink);
+      background: #edf1ea;
+      border-color: var(--line);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      min-height: 64px;
+      background: #fbfcfa;
+    }
+
+    .metric .name {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
+
+    .metric .value {
+      font-size: clamp(18px, 2vw, 26px);
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .metric .unit {
+      display: none;
+    }
+
+    .metric.row-start {
+      grid-column-start: 1;
+    }
+
+    .up { color: var(--red); }
+    .down { color: var(--green); }
+
+    .main-result {
+      display: grid;
+      grid-template-columns: minmax(360px, 1fr) 280px;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      display: block;
+      background: #f8faf6;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .readout {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .readout table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .readout td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 0;
+      vertical-align: top;
+    }
+
+    .readout td:last-child {
+      text-align: right;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      padding-left: 8px;
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #fff2ed;
+      border: 1px solid #f0c0ae;
+      color: #8d321e;
+      font-size: 13px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1100px) {
+      .layout,
+      .main-result {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        width: min(100vw - 18px, 1280px);
+        padding-top: 12px;
+      }
+
+      .grid,
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>S2 Chuck 盤面傾角計算器</h1>
+      <div class="subtitle">固定 A / V1 / V2 幾何位置，只輸入高度與盤面直徑</div>
+    </header>
+
+    <div class="layout">
+      <section class="panel controls">
+        <div class="section">
+          <div class="machine-row">
+            <label><input type="radio" name="model" value="fsg2300" checked>FSG-2300</label>
+            <label><input type="radio" name="model" value="fsg150i">FSG-150i</label>
+            <span class="machine-divider" id="grindDivider"></span>
+            <span class="machine-row" id="grindSelector">
+              <label><input type="radio" name="machine" value="grind1" checked>Grind1</label>
+              <label><input type="radio" name="machine" value="grind2">Grind2</label>
+            </span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">固定支撐點座標 mm</div>
+          <div class="geometry" id="supportGeometry">
+            <strong>A</strong>=(0.000,+120.000) / <strong>V1</strong>=(+103.923,-60.000) / <strong>V2</strong>=(-103.923,-60.000)，PCD R120，V1/V2 距離 207.846 mm。
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">調整前 Z 高度 mm</div>
+          <div class="grid">
+            <label>A Z <input id="az0" type="number" step="0.0001" value="0"></label>
+            <label>V1 Z <input id="v1z0" type="number" step="0.0001" value="0"></label>
+            <label>V2 Z <input id="v2z0" type="number" step="0.0001" value="0"></label>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">調整後 Z 高度 mm</div>
+          <div class="grid">
+            <label>A Z <input id="az1" type="number" step="0.0001" value="0" disabled></label>
+            <label>V1 Z <input id="v1z1" type="number" step="0.0001" value="0.0010"></label>
+            <label>V2 Z <input id="v2z1" type="number" step="0.0001" value="-0.0010"></label>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">S2 盤面尺寸 mm</div>
+          <div class="diameter-row">
+            <label class="diameter-input">盤面直徑 <input id="diameter" type="number" min="0.001" step="0.001" value="300"></label>
+            <label class="option-row"><input id="showS1" type="checkbox" checked>顯示S1砂輪示意圖</label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="calc">計算</button>
+          <button class="secondary" id="reset">回到範例</button>
+        </div>
+        <div class="error" id="error"></div>
+        <div class="footer-note">正值代表調整後比調整前高，負值代表調整後比調整前低。A 點固定不動，所以調整後 A Z 會自動等於調整前 A Z。</div>
+      </section>
+
+      <section class="panel results">
+        <div class="summary">
+          <div class="metric">
+            <div class="name">最大升高</div>
+            <div class="value up" id="maxUp">0.0000</div>
+            <div class="unit">mm</div>
+          </div>
+          <div class="metric">
+            <div class="name">最大降低</div>
+            <div class="value down" id="maxDown">0.0000</div>
+            <div class="unit">mm</div>
+          </div>
+          <div class="metric">
+            <div class="name">盤中心變化</div>
+            <div class="value" id="centerDelta">0.0000</div>
+            <div class="unit">mm</div>
+          </div>
+          <div class="metric">
+            <div class="name">盤面落差</div>
+            <div class="value" id="spanDelta">0.0000</div>
+            <div class="unit">mm</div>
+          </div>
+          <div class="metric">
+            <div class="name">砂輪弧最高變化</div>
+            <div class="value up" id="contactMaxDelta">--</div>
+            <div class="unit">mm</div>
+          </div>
+          <div class="metric row-start">
+            <div class="name">CG T1 變化</div>
+            <div class="value" id="t1CgDelta">--</div>
+            <div class="unit">mm</div>
+          </div>
+          <div class="metric">
+            <div class="name">CG T2 變化</div>
+            <div class="value" id="t2CgDelta">--</div>
+            <div class="unit">mm</div>
+          </div>
+        </div>
+
+        <div class="main-result">
+          <canvas id="plot" width="900" height="900"></canvas>
+          <aside class="readout">
+            <table>
+              <tbody>
+                <tr><td>V1 實際調整</td><td id="v1Adj">0.0000</td></tr>
+                <tr><td>V2 實際調整</td><td id="v2Adj">0.0000</td></tr>
+                <tr><td>最高點 XY</td><td id="maxPoint">0, 0</td></tr>
+                <tr><td>最低點 XY</td><td id="minPoint">0, 0</td></tr>
+                <tr><td>砂輪弧最高 XY</td><td id="contactMaxPoint">--</td></tr>
+                <tr><td>CG T1 XY / 變化</td><td id="t1CgPoint">--</td></tr>
+                <tr><td>CG T2 XY / 變化</td><td id="t2CgPoint">--</td></tr>
+                <tr><td>調整前平面</td><td id="plane0">Z = 0</td></tr>
+                <tr><td>調整後平面</td><td id="plane1">Z = 0</td></tr>
+              </tbody>
+            </table>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const SUPPORT_RADIUS = 120;
+    const SUPPORT_X = SUPPORT_RADIUS * Math.cos(Math.PI / 6);
+    const FSG150_RADIUS = 175;
+    const FSG150_X = FSG150_RADIUS / 2;
+    const FSG150_Y = FSG150_RADIUS * Math.sin(Math.PI / 3);
+    const MACHINES = {
+      grind1: {
+        label: "Grind1",
+        supportRadius: SUPPORT_RADIUS,
+        supportDistance: 207.846,
+        A: { x: 0, y: SUPPORT_RADIUS },
+        V1: { x: SUPPORT_X, y: -SUPPORT_RADIUS / 2 },
+        V2: { x: -SUPPORT_X, y: -SUPPORT_RADIUS / 2 },
+        s1Wheel: { x: -128, y: 96, r: 152 },
+        cgPoints: [
+          { id: "t1", label: "T1", x: 58.8879, y: -148 },
+          { id: "t2", label: "T2", x: 58.8879, y: -128 }
+        ]
+      },
+      grind2: {
+        label: "Grind2",
+        supportRadius: SUPPORT_RADIUS,
+        supportDistance: 207.846,
+        A: { x: SUPPORT_X, y: -SUPPORT_RADIUS / 2 },
+        V1: { x: -SUPPORT_X, y: -SUPPORT_RADIUS / 2 },
+        V2: { x: 0, y: SUPPORT_RADIUS },
+        s1Wheel: { x: 128, y: 96, r: 152 },
+        cgPoints: [
+          { id: "t1", label: "T1", x: -58.888, y: -148 },
+          { id: "t2", label: "T2", x: -58.888, y: -128 }
+        ]
+      },
+      fsg150i: {
+        label: "FSG-150i",
+        supportRadius: FSG150_RADIUS,
+        supportDistance: 303.109,
+        A: { x: FSG150_X, y: -FSG150_Y },
+        V1: { x: -FSG150_RADIUS, y: 0 },
+        V2: { x: FSG150_X, y: FSG150_Y },
+        s1Wheel: { x: 152, y: 0, r: 152 },
+        cgPoints: [
+          { id: "t1", label: "T1", x: -17.42, y: 55 },
+          { id: "t2", label: "T2", x: -17.42, y: 82.5 }
+        ]
+      }
+    };
+    const STORAGE_KEY = "s2ChuckPlaneCalculator.v2";
+    const ids = ["az0", "v1z0", "v2z0", "az1", "v1z1", "v2z1", "diameter"];
+    const defaults = {};
+    for (const id of ids) defaults[id] = document.getElementById(id).value;
+
+    function selectedModelKey() {
+      return document.querySelector('input[name="model"]:checked').value;
+    }
+
+    function selectedMachineKey() {
+      if (selectedModelKey() === "fsg150i") return "fsg150i";
+      return document.querySelector('input[name="machine"]:checked').value;
+    }
+
+    function currentMachine() {
+      return MACHINES[selectedMachineKey()];
+    }
+
+    function pointText(point) {
+      return `(${fmt(point.x, 3)},${point.y >= 0 ? "+" : ""}${fmt(point.y, 3)})`;
+    }
+
+    function updateMachineUi() {
+      const showGrindSelector = selectedModelKey() === "fsg2300";
+      document.getElementById("grindSelector").style.display = showGrindSelector ? "flex" : "none";
+      document.getElementById("grindDivider").style.display = showGrindSelector ? "block" : "none";
+      const machine = currentMachine();
+      const cgText = (machine.cgPoints || [])
+        .map(point => `<strong>${point.label}</strong>=${pointText(point)}`)
+        .join(" / ");
+      document.getElementById("supportGeometry").innerHTML =
+        `<strong>A</strong>=${pointText(machine.A)} / ` +
+        `<strong>V1</strong>=${pointText(machine.V1)} / ` +
+        `<strong>V2</strong>=${pointText(machine.V2)}` +
+        `${cgText ? ` / ${cgText}` : ""}，PCD R${fmt(machine.supportRadius, 3)}，V1/V2 距離 ${fmt(machine.supportDistance, 3)} mm。`;
+    }
+
+    function num(id) {
+      const value = Number(document.getElementById(id).value);
+      if (!Number.isFinite(value)) throw new Error(`${id} 不是有效數字`);
+      return value;
+    }
+
+    function snap(value) {
+      return Math.round(value / 0.0001) * 0.0001;
+    }
+
+    function planeFromPoints(p1, p2, p3) {
+      const det =
+        p1.x * (p2.y - p3.y) +
+        p2.x * (p3.y - p1.y) +
+        p3.x * (p1.y - p2.y);
+
+      if (Math.abs(det) < 1e-12) {
+        throw new Error("A、V1、V2 的 XY 位置不可在同一直線上");
+      }
+
+      const a = (
+        p1.z * (p2.y - p3.y) +
+        p2.z * (p3.y - p1.y) +
+        p3.z * (p1.y - p2.y)
+      ) / det;
+
+      const b = (
+        p1.x * (p2.z - p3.z) +
+        p2.x * (p3.z - p1.z) +
+        p3.x * (p1.z - p2.z)
+      ) / det;
+
+      const c = (
+        p1.x * (p2.y * p3.z - p3.y * p2.z) +
+        p2.x * (p3.y * p1.z - p1.y * p3.z) +
+        p3.x * (p1.y * p2.z - p2.y * p1.z)
+      ) / det;
+
+      return { a, b, c };
+    }
+
+    function zAt(plane, x, y) {
+      return plane.a * x + plane.b * y + plane.c;
+    }
+
+    function normalizeAngle(angle) {
+      const twoPi = Math.PI * 2;
+      return ((angle % twoPi) + twoPi) % twoPi;
+    }
+
+    function angleSpan(start, end) {
+      return normalizeAngle(end - start);
+    }
+
+    function pointOnCircle(radius, angle) {
+      return { x: radius * Math.cos(angle), y: radius * Math.sin(angle) };
+    }
+
+    function pointInsideWheel(point, wheel) {
+      return (point.x - wheel.x) ** 2 + (point.y - wheel.y) ** 2 <= wheel.r ** 2 + 1e-8;
+    }
+
+    function angleInInterval(angle, interval) {
+      if (interval.full) return true;
+      return angleSpan(interval.start, normalizeAngle(angle)) <= angleSpan(interval.start, interval.end) + 1e-10;
+    }
+
+    function angleInIntervals(angle, intervals) {
+      return intervals.some(interval => angleInInterval(angle, interval));
+    }
+
+    function contactArcOnWheel(chuckRadius, wheel) {
+      const d = Math.hypot(wheel.x, wheel.y);
+      if (d < 1e-12) {
+        return wheel.r <= chuckRadius ? [{ start: 0, end: Math.PI * 2, full: true }] : [];
+      }
+
+      if (d + wheel.r <= chuckRadius + 1e-10) {
+        return [{ start: 0, end: Math.PI * 2, full: true }];
+      }
+
+      if (d > chuckRadius + wheel.r + 1e-10 || d < Math.abs(chuckRadius - wheel.r) - 1e-10) {
+        return [];
+      }
+
+      const a = (wheel.r ** 2 - chuckRadius ** 2 + d ** 2) / (2 * d);
+      const h2 = wheel.r ** 2 - a ** 2;
+      if (h2 < -1e-8) return [];
+      const h = Math.sqrt(Math.max(0, h2));
+      const ux = -wheel.x / d;
+      const uy = -wheel.y / d;
+      const bx = wheel.x + a * ux;
+      const by = wheel.y + a * uy;
+      const p1 = { x: bx + h * -uy, y: by + h * ux };
+      const p2 = { x: bx - h * -uy, y: by - h * ux };
+      const t1 = normalizeAngle(Math.atan2(p1.y - wheel.y, p1.x - wheel.x));
+      const t2 = normalizeAngle(Math.atan2(p2.y - wheel.y, p2.x - wheel.x));
+
+      if (Math.abs(h) < 1e-10) {
+        return [{ start: t1, end: t1, tangent: true }];
+      }
+
+      const mid12 = normalizeAngle(t1 + angleSpan(t1, t2) / 2);
+      const midPoint = {
+        x: wheel.x + wheel.r * Math.cos(mid12),
+        y: wheel.y + wheel.r * Math.sin(mid12)
+      };
+      if (midPoint.x * midPoint.x + midPoint.y * midPoint.y <= chuckRadius * chuckRadius + 1e-8) {
+        return [{ start: t1, end: t2 }];
+      }
+      return [{ start: t2, end: t1 }];
+    }
+
+    function contactArcHighest(chuckRadius, wheel, deltaPlane) {
+      const intervals = contactArcOnWheel(chuckRadius, wheel);
+      if (!intervals.length) return null;
+
+      const candidates = [];
+      for (const interval of intervals) {
+        if (interval.full) continue;
+        candidates.push(interval.start, interval.end);
+      }
+
+      const preferred = normalizeAngle(Math.atan2(deltaPlane.b, deltaPlane.a));
+      if (Math.hypot(deltaPlane.a, deltaPlane.b) < 1e-15) {
+        candidates.push(intervals[0].full ? 0 : intervals[0].start);
+      } else if (angleInIntervals(preferred, intervals)) {
+        candidates.push(preferred);
+      }
+
+      if (!candidates.length) candidates.push(preferred);
+
+      let best = null;
+      for (const angle of candidates) {
+        const point = {
+          x: wheel.x + wheel.r * Math.cos(angle),
+          y: wheel.y + wheel.r * Math.sin(angle)
+        };
+        if (point.x * point.x + point.y * point.y > chuckRadius * chuckRadius + 1e-8) continue;
+        const delta = zAt(deltaPlane, point.x, point.y);
+        if (!best || delta > best.delta) best = { ...point, angle, delta, intervals };
+      }
+      return best ? { ...best, wheel } : null;
+    }
+
+    function fmt(value, digits = 4) {
+      const fixed = Math.abs(value) < 0.0000005 ? 0 : value;
+      return fixed.toFixed(digits);
+    }
+
+    function fmtMicron(value) {
+      return `${fmt(value, 4)} mm / ${fmt(value * 1000, 1)} um`;
+    }
+
+    function setText(id, text) {
+      document.getElementById(id).textContent = text;
+    }
+
+    function setSignedValue(id, value) {
+      const el = document.getElementById(id);
+      if (!Number.isFinite(value)) {
+        el.textContent = "--";
+        el.classList.remove("up", "down");
+        return;
+      }
+      el.textContent = fmt(value);
+      el.classList.toggle("up", value > 0);
+      el.classList.toggle("down", value < 0);
+    }
+
+    function getStoredState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+        return {};
+      }
+    }
+
+    function loadMachineInputs(machineKey = selectedMachineKey()) {
+      const saved = getStoredState();
+      const machineData = saved.machines?.[machineKey] || {};
+      for (const id of ids) {
+        document.getElementById(id).value = machineData[id] !== undefined ? machineData[id] : defaults[id];
+      }
+      document.getElementById("showS1").checked =
+        machineData.showS1 !== undefined ? Boolean(machineData.showS1) : true;
+    }
+
+    function loadSavedInputs() {
+      const saved = getStoredState();
+      const modelKey = saved.selectedModel === "fsg150i" ? "fsg150i" : "fsg2300";
+      document.querySelector(`input[name="model"][value="${modelKey}"]`).checked = true;
+      const machineKey = modelKey === "fsg150i"
+        ? "fsg150i"
+        : (MACHINES[saved.selectedMachine] && saved.selectedMachine !== "fsg150i" ? saved.selectedMachine : "grind1");
+      if (modelKey === "fsg2300") {
+        document.querySelector(`input[name="machine"][value="${machineKey}"]`).checked = true;
+      }
+      updateMachineUi();
+      loadMachineInputs(machineKey);
+    }
+
+    function saveInputs() {
+      const state = getStoredState();
+      const modelKey = selectedModelKey();
+      const machineKey = selectedMachineKey();
+      state.selectedModel = modelKey;
+      state.selectedMachine = machineKey;
+      state.machines = state.machines || {};
+      const data = {};
+      for (const id of ids) data[id] = document.getElementById(id).value;
+      data.showS1 = document.getElementById("showS1").checked;
+      state.machines[machineKey] = data;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function drawPoint(ctx, x, y, label, color, textColor = "#20231f", options = {}) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      if (!label) {
+        ctx.restore();
+        return;
+      }
+      ctx.fillStyle = textColor;
+      const labelDx = options.labelDx ?? 14;
+      const labelDy = options.labelDy ?? -14;
+      const isExtreme = label === "最高" || label === "最低";
+      ctx.font = `${isExtreme ? 900 : 800} ${isExtreme ? 28 : 32}px Microsoft JhengHei, Segoe UI, Arial`;
+      if (options.labelSize) {
+        ctx.font = `${options.labelWeight ?? 800} ${options.labelSize}px Microsoft JhengHei, Segoe UI, Arial`;
+      }
+      ctx.fillText(label, x + labelDx, y + labelDy);
+      ctx.restore();
+    }
+
+    function drawS1Wheel(ctx, px, py, scale, wheel) {
+      ctx.save();
+      ctx.fillStyle = "rgba(120, 126, 130, .18)";
+      ctx.strokeStyle = "rgba(80, 86, 90, .55)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(px(wheel.x), py(wheel.y), wheel.r * scale, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "rgba(40, 44, 48, .70)";
+      ctx.font = "800 26px Microsoft JhengHei, Segoe UI, Arial";
+      ctx.fillText("S1", px(wheel.x) - 18, py(wheel.y) + 8);
+      ctx.restore();
+    }
+
+    function drawContactArc(ctx, px, py, scale, contact) {
+      if (!contact) return;
+      ctx.save();
+      ctx.strokeStyle = "rgba(126, 58, 168, .95)";
+      ctx.lineWidth = 5;
+      ctx.setLineDash([]);
+      for (const interval of contact.intervals) {
+        ctx.beginPath();
+        if (interval.full) {
+          ctx.arc(px(contact.wheel.x), py(contact.wheel.y), contact.wheel.r * scale, 0, Math.PI * 2);
+        } else {
+          ctx.arc(px(contact.wheel.x), py(contact.wheel.y), contact.wheel.r * scale, -interval.start, -interval.end, true);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function draw(data) {
+      const canvas = document.getElementById("plot");
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const radius = data.diameter / 2;
+      const viewRadius = Math.max(radius, data.supportRadius) + 34;
+      const scale = Math.min(width, height) * 0.82 / (viewRadius * 2);
+      const ox = width / 2;
+      const oy = height / 2;
+      const px = x => ox + x * scale;
+      const py = y => oy - y * scale;
+
+      const image = ctx.createImageData(width, height);
+      const range = Math.max(data.maxDelta - data.minDelta, 0.0001);
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const wx = (x - ox) / scale;
+          const wy = (oy - y) / scale;
+          const inside = wx * wx + wy * wy <= radius * radius;
+          const idx = (y * width + x) * 4;
+          if (!inside) {
+            image.data[idx] = 248;
+            image.data[idx + 1] = 250;
+            image.data[idx + 2] = 246;
+            image.data[idx + 3] = 255;
+            continue;
+          }
+
+          const d = zAt(data.deltaPlane, wx, wy);
+          const t = Math.min(1, Math.max(0, (d - data.minDelta) / range));
+          const color = heightColor(t);
+          image.data[idx] = color.r;
+          image.data[idx + 1] = color.g;
+          image.data[idx + 2] = color.b;
+          image.data[idx + 3] = 255;
+        }
+      }
+      ctx.putImageData(image, 0, 0);
+
+      ctx.save();
+      if (data.showS1) drawS1Wheel(ctx, px, py, scale, data.s1Wheel);
+
+      ctx.strokeStyle = "#20231f";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(px(0), py(0), radius * scale, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(36, 88, 167, .50)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 7]);
+      ctx.beginPath();
+      ctx.arc(px(0), py(0), data.supportRadius * scale, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.strokeStyle = "rgba(32, 35, 31, .18)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px(-viewRadius), py(0));
+      ctx.lineTo(px(viewRadius), py(0));
+      ctx.moveTo(px(0), py(-viewRadius));
+      ctx.lineTo(px(0), py(viewRadius));
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(184, 76, 46, .45)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(px(data.A.x), py(data.A.y));
+      ctx.lineTo(px(data.V1.x), py(data.V1.y));
+      ctx.lineTo(px(data.V2.x), py(data.V2.y));
+      ctx.closePath();
+      ctx.stroke();
+
+      drawContactArc(ctx, px, py, scale, data.contactHighest);
+
+      drawPoint(ctx, px(data.A.x), py(data.A.y), "A", "#1e293b");
+      drawPoint(ctx, px(data.V1.x), py(data.V1.y), "V1", "#2458a7");
+      drawPoint(ctx, px(data.V2.x), py(data.V2.y), "V2", "#2458a7");
+      drawPoint(ctx, px(data.maxPoint.x), py(data.maxPoint.y), "最高", "#b84c2e");
+      drawPoint(ctx, px(data.minPoint.x), py(data.minPoint.y), "最低", "#19744c");
+      if (data.contactHighest) {
+        drawPoint(ctx, px(data.contactHighest.x), py(data.contactHighest.y), "弧高", "#7e3aa8", "#d12f24");
+      }
+      if (data.cgResults) {
+        for (const point of data.cgResults) {
+          drawPoint(ctx, px(point.x), py(point.y), point.label, "#f59e0b", "#8a4a00", {
+            labelDx: 14,
+            labelDy: 7,
+            labelSize: 24
+          });
+        }
+      }
+
+      ctx.fillStyle = "#20231f";
+      ctx.font = "14px Microsoft JhengHei, Segoe UI, Arial";
+      drawLegend(ctx, width);
+      ctx.fillText("S2 盤面真圓顯示；綠色最低，紅色最高", 20, 28);
+      ctx.restore();
+    }
+
+    function heightColor(t) {
+      const stops = [
+        { t: 0.00, r: 38, g: 143, b: 91 },
+        { t: 0.50, r: 246, g: 241, b: 185 },
+        { t: 1.00, r: 202, g: 70, b: 48 }
+      ];
+      const left = t <= 0.5 ? stops[0] : stops[1];
+      const right = t <= 0.5 ? stops[1] : stops[2];
+      const local = (t - left.t) / (right.t - left.t);
+      return {
+        r: Math.round(left.r + (right.r - left.r) * local),
+        g: Math.round(left.g + (right.g - left.g) * local),
+        b: Math.round(left.b + (right.b - left.b) * local)
+      };
+    }
+
+    function drawLegend(ctx, width) {
+      const x = width - 210;
+      const y = 18;
+      const w = 170;
+      const h = 12;
+      const grad = ctx.createLinearGradient(x, y, x + w, y);
+      grad.addColorStop(0, "rgb(38,143,91)");
+      grad.addColorStop(0.5, "rgb(246,241,185)");
+      grad.addColorStop(1, "rgb(202,70,48)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = "rgba(32, 35, 31, .35)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillStyle = "#20231f";
+      ctx.font = "12px Microsoft JhengHei, Segoe UI, Arial";
+      ctx.fillText("最低", x, y + 30);
+      ctx.fillText("最高", x + w - 24, y + 30);
+    }
+
+    function calculate() {
+      const error = document.getElementById("error");
+      error.style.display = "none";
+
+      try {
+        updateMachineUi();
+        const machine = currentMachine();
+        const az0 = num("az0");
+        const v1z0 = num("v1z0");
+        const v2z0 = num("v2z0");
+        const v1Adjust = snap(num("v1z1") - v1z0);
+        const v2Adjust = snap(num("v2z1") - v2z0);
+        const az1 = az0;
+        const v1z1 = v1z0 + v1Adjust;
+        const v2z1 = v2z0 + v2Adjust;
+        const diameter = num("diameter");
+        const showS1 = document.getElementById("showS1").checked;
+        const radius = diameter / 2;
+
+        if (diameter <= 0) throw new Error("盤面直徑必須大於 0");
+
+        document.getElementById("az1").value = fmt(az1, 4);
+        saveInputs();
+
+        const p0 = planeFromPoints(
+          { x: machine.A.x, y: machine.A.y, z: az0 },
+          { x: machine.V1.x, y: machine.V1.y, z: v1z0 },
+          { x: machine.V2.x, y: machine.V2.y, z: v2z0 }
+        );
+        const p1 = planeFromPoints(
+          { x: machine.A.x, y: machine.A.y, z: az1 },
+          { x: machine.V1.x, y: machine.V1.y, z: v1z1 },
+          { x: machine.V2.x, y: machine.V2.y, z: v2z1 }
+        );
+        const deltaPlane = {
+          a: p1.a - p0.a,
+          b: p1.b - p0.b,
+          c: p1.c - p0.c
+        };
+
+        const centerDelta = zAt(deltaPlane, 0, 0);
+        const gradient = Math.hypot(deltaPlane.a, deltaPlane.b);
+        const maxDelta = centerDelta + radius * gradient;
+        const minDelta = centerDelta - radius * gradient;
+        const direction = gradient > 1e-15
+          ? { x: deltaPlane.a / gradient, y: deltaPlane.b / gradient }
+          : { x: 1, y: 0 };
+        const maxPoint = { x: radius * direction.x, y: radius * direction.y };
+        const minPoint = { x: -radius * direction.x, y: -radius * direction.y };
+        const contactHighest = showS1 ? contactArcHighest(radius, machine.s1Wheel, deltaPlane) : null;
+        const cgResults = (machine.cgPoints || []).map(point => ({
+          ...point,
+          delta: zAt(deltaPlane, point.x, point.y)
+        }));
+        const t1Cg = cgResults.find(point => point.id === "t1");
+        const t2Cg = cgResults.find(point => point.id === "t2");
+
+        setText("maxUp", fmt(maxDelta));
+        setText("maxDown", fmt(Math.min(minDelta, 0)));
+        setText("centerDelta", fmt(centerDelta));
+        setText("spanDelta", fmt(maxDelta - minDelta));
+        setText("v1Adj", fmtMicron(v1Adjust));
+        setText("v2Adj", fmtMicron(v2Adjust));
+        setText("maxPoint", `${fmt(maxPoint.x, 3)}, ${fmt(maxPoint.y, 3)}`);
+        setText("minPoint", `${fmt(minPoint.x, 3)}, ${fmt(minPoint.y, 3)}`);
+        setText("contactMaxPoint", contactHighest ? `${fmt(contactHighest.x, 3)}, ${fmt(contactHighest.y, 3)}` : "--");
+        setText("contactMaxDelta", contactHighest ? fmt(contactHighest.delta) : "--");
+        setSignedValue("t1CgDelta", t1Cg ? t1Cg.delta : NaN);
+        setSignedValue("t2CgDelta", t2Cg ? t2Cg.delta : NaN);
+        setText("t1CgPoint", t1Cg ? `${fmt(t1Cg.x, 4)}, ${fmt(t1Cg.y, 3)} / ${fmt(t1Cg.delta)}` : "--");
+        setText("t2CgPoint", t2Cg ? `${fmt(t2Cg.x, 4)}, ${fmt(t2Cg.y, 3)} / ${fmt(t2Cg.delta)}` : "--");
+        setText("plane0", `Z=${fmt(p0.a, 8)}X ${p0.b < 0 ? "-" : "+"} ${fmt(Math.abs(p0.b), 8)}Y ${p0.c < 0 ? "-" : "+"} ${fmt(Math.abs(p0.c), 8)}`);
+        setText("plane1", `Z=${fmt(p1.a, 8)}X ${p1.b < 0 ? "-" : "+"} ${fmt(Math.abs(p1.b), 8)}Y ${p1.c < 0 ? "-" : "+"} ${fmt(Math.abs(p1.c), 8)}`);
+
+        draw({
+          diameter,
+          showS1,
+          A: machine.A,
+          V1: machine.V1,
+          V2: machine.V2,
+          supportRadius: machine.supportRadius,
+          s1Wheel: machine.s1Wheel,
+          deltaPlane,
+          maxDelta,
+          minDelta,
+          maxPoint,
+          minPoint,
+          contactHighest,
+          cgResults
+        });
+      } catch (err) {
+        error.textContent = err.message;
+        error.style.display = "block";
+      }
+    }
+
+    function applySummaryLabels() {
+      const labels = {
+        maxUp: "最大升高 (mm)",
+        maxDown: "最大降低 (mm)",
+        centerDelta: "盤中心變化 (mm)",
+        spanDelta: "盤面落差 (mm)",
+        contactMaxDelta: "砂輪弧最高變化 (mm)",
+        t1CgDelta: "CG T1 變化 (mm)",
+        t2CgDelta: "CG T2 變化 (mm)"
+      };
+      for (const [id, label] of Object.entries(labels)) {
+        const valueEl = document.getElementById(id);
+        const nameEl = valueEl?.closest(".metric")?.querySelector(".name");
+        if (nameEl) nameEl.textContent = label;
+      }
+    }
+
+    document.getElementById("calc").addEventListener("click", calculate);
+    document.getElementById("reset").addEventListener("click", () => {
+      for (const id of ids) document.getElementById(id).value = defaults[id];
+      document.getElementById("showS1").checked = true;
+      const state = getStoredState();
+      if (state.machines) delete state.machines[selectedMachineKey()];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      calculate();
+    });
+    for (const id of ids) document.getElementById(id).addEventListener("input", calculate);
+    document.getElementById("showS1").addEventListener("change", calculate);
+    document.querySelectorAll('input[name="model"]').forEach(input => {
+      input.addEventListener("change", () => {
+        updateMachineUi();
+        loadMachineInputs(selectedMachineKey());
+        calculate();
+      });
+    });
+    document.querySelectorAll('input[name="machine"]').forEach(input => {
+      input.addEventListener("change", () => {
+        updateMachineUi();
+        loadMachineInputs(input.value);
+        calculate();
+      });
+    });
+    applySummaryLabels();
+    loadSavedInputs();
+    calculate();
+  </script>
+</body>
+</html>
