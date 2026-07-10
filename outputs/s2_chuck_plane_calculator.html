@@ -429,12 +429,12 @@
             <div class="unit">mm</div>
           </div>
           <div class="metric">
-            <div class="name">T1 CG 變化</div>
+            <div class="name">CG T1 變化</div>
             <div class="value" id="t1CgDelta">--</div>
             <div class="unit">mm</div>
           </div>
           <div class="metric">
-            <div class="name">T2 CG 變化</div>
+            <div class="name">CG T2 變化</div>
             <div class="value" id="t2CgDelta">--</div>
             <div class="unit">mm</div>
           </div>
@@ -450,8 +450,8 @@
                 <tr><td>最高點 XY</td><td id="maxPoint">0, 0</td></tr>
                 <tr><td>最低點 XY</td><td id="minPoint">0, 0</td></tr>
                 <tr><td>砂輪弧最高 XY</td><td id="contactMaxPoint">--</td></tr>
-                <tr><td>T1 CG XY / 變化</td><td id="t1CgPoint">--</td></tr>
-                <tr><td>T2 CG XY / 變化</td><td id="t2CgPoint">--</td></tr>
+                <tr><td>CG T1 XY / 變化</td><td id="t1CgPoint">--</td></tr>
+                <tr><td>CG T2 XY / 變化</td><td id="t2CgPoint">--</td></tr>
                 <tr><td>調整前平面</td><td id="plane0">Z = 0</td></tr>
                 <tr><td>調整後平面</td><td id="plane1">Z = 0</td></tr>
               </tbody>
@@ -1048,8 +1048,8 @@
         centerDelta: "盤中心變化 (mm)",
         spanDelta: "盤面落差 (mm)",
         contactMaxDelta: "砂輪弧最高變化 (mm)",
-        t1CgDelta: "T1 CG 變化 (mm)",
-        t2CgDelta: "T2 CG 變化 (mm)"
+        t1CgDelta: "CG T1 變化 (mm)",
+        t2CgDelta: "CG T2 變化 (mm)"
       };
       for (const [id, label] of Object.entries(labels)) {
         const valueEl = document.getElementById(id);

@@ -42,7 +42,7 @@
 - S1 wheel radius: `152 mm`
 - S1 wheel approximate center used in drawing/calculation: `X -128, Y +96`
 
-### FSG-2300 Grind1 CG T Points
+### FSG-2300 Grind1 CG T1/T2 Points
 
 Source drawing: `FSG-2300 G1CG相對Chuck圓心距離.jpg`
 
