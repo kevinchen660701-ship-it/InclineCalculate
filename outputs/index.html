@@ -763,7 +763,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
-    function drawPoint(ctx, x, y, label, color, textColor = "#20231f") {
+    function drawPoint(ctx, x, y, label, color, textColor = "#20231f", options = {}) {
       ctx.save();
       ctx.fillStyle = color;
       ctx.strokeStyle = "#fff";
@@ -777,9 +777,14 @@
         return;
       }
       ctx.fillStyle = textColor;
+      const labelDx = options.labelDx ?? 14;
+      const labelDy = options.labelDy ?? -14;
       const isExtreme = label === "最高" || label === "最低";
       ctx.font = `${isExtreme ? 900 : 800} ${isExtreme ? 28 : 32}px Microsoft JhengHei, Segoe UI, Arial`;
-      ctx.fillText(label, x + 14, y - 14);
+      if (options.labelSize) {
+        ctx.font = `${options.labelWeight ?? 800} ${options.labelSize}px Microsoft JhengHei, Segoe UI, Arial`;
+      }
+      ctx.fillText(label, x + labelDx, y + labelDy);
       ctx.restore();
     }
 
@@ -906,7 +911,11 @@
       }
       if (data.cgResults) {
         for (const point of data.cgResults) {
-          drawPoint(ctx, px(point.x), py(point.y), point.label, "#f59e0b", "#8a4a00");
+          drawPoint(ctx, px(point.x), py(point.y), point.label, "#f59e0b", "#8a4a00", {
+            labelDx: 14,
+            labelDy: 7,
+            labelSize: 24
+          });
         }
       }
 
