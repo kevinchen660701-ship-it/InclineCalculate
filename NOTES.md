@@ -51,7 +51,7 @@ Source drawing: `FSG-2300 G1CG相對Chuck圓心距離.jpg`
 - Upper point is T2.
 - Lower point is T1.
 - T1: `X +58.8879, Y -148.000`
-- T2: `X +58.8879, Y -95.000`
+- T2: `X +58.8879, Y -128.000`
 - T1/T2 Z change should be calculated using `deltaPlane`.
 
 ## FSG-2300 Grind2
