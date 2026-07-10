@@ -43,8 +43,8 @@
 - V1/V2 distance: `207.846 mm`
 - S1 wheel diameter: `304 mm`
 - S1 wheel radius: `152 mm`
-- S1 wheel center used in drawing/calculation: `X -76.000, Y +131.636`
-- This center keeps the S1 wheel arc passing through chuck center `(0, 0)` with radius `152 mm`, following the 120 degree direction shown in the reference drawing.
+- S1 wheel center used in drawing/calculation: `X -107.480, Y +107.480`
+- This center keeps the S1 wheel arc passing through chuck center `(0, 0)` with radius `152 mm`, using a 135 degree intermediate direction between the last two visual trials.
 
 ### FSG-2300 Grind1 CG T1/T2 Points
 
@@ -66,8 +66,8 @@ Source drawing: `FSG-2300 G1CG相對Chuck圓心距離.jpg`
 - V1/V2 distance: `207.846 mm`
 - S1 wheel diameter: `304 mm`
 - S1 wheel radius: `152 mm`
-- S1 wheel center used in drawing/calculation: `X +76.000, Y +131.636`
-- This center keeps the S1 wheel arc passing through chuck center `(0, 0)` with radius `152 mm`, following the 120 degree direction shown in the reference drawing.
+- S1 wheel center used in drawing/calculation: `X +107.480, Y +107.480`
+- This center keeps the S1 wheel arc passing through chuck center `(0, 0)` with radius `152 mm`, using a 135 degree intermediate direction between the last two visual trials.
 - CG T1: `X -58.888, Y -148.000`
 - CG T2: `X -58.888, Y -128.000`
 
