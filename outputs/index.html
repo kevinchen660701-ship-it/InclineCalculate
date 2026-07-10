@@ -528,10 +528,14 @@
       document.getElementById("grindSelector").style.display = showGrindSelector ? "flex" : "none";
       document.getElementById("grindDivider").style.display = showGrindSelector ? "block" : "none";
       const machine = currentMachine();
+      const cgText = (machine.cgPoints || [])
+        .map(point => `<strong>${point.label}</strong>=${pointText(point)}`)
+        .join(" / ");
       document.getElementById("supportGeometry").innerHTML =
         `<strong>A</strong>=${pointText(machine.A)} / ` +
         `<strong>V1</strong>=${pointText(machine.V1)} / ` +
-        `<strong>V2</strong>=${pointText(machine.V2)}，PCD R${fmt(machine.supportRadius, 3)}，V1/V2 距離 ${fmt(machine.supportDistance, 3)} mm。`;
+        `<strong>V2</strong>=${pointText(machine.V2)}` +
+        `${cgText ? ` / ${cgText}` : ""}，PCD R${fmt(machine.supportRadius, 3)}，V1/V2 距離 ${fmt(machine.supportDistance, 3)} mm。`;
     }
 
     function num(id) {
