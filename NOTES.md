@@ -80,8 +80,8 @@ Source drawing: `FSG-2300 G1CG相對Chuck圓心距離.jpg`
 - S1 wheel diameter: `304 mm`
 - S1 wheel radius: `152 mm`
 - S1 wheel approximate center used in drawing/calculation: `X +152, Y 0`
-- CG T1: `X -17.420, Y +55.000`
-- CG T2: `X -17.420, Y +82.500`
+- CG T1: `X -17.420, Y +160.000`
+- CG T2: `X -17.420, Y +140.000`
 
 ## Deployment
 
