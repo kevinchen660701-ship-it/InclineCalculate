@@ -250,6 +250,10 @@
       display: none;
     }
 
+    .metric.row-start {
+      grid-column-start: 1;
+    }
+
     .up { color: var(--red); }
     .down { color: var(--green); }
 
@@ -428,7 +432,7 @@
             <div class="value up" id="contactMaxDelta">--</div>
             <div class="unit">mm</div>
           </div>
-          <div class="metric">
+          <div class="metric row-start">
             <div class="name">CG T1 變化</div>
             <div class="value" id="t1CgDelta">--</div>
             <div class="unit">mm</div>

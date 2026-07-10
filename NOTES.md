@@ -29,6 +29,7 @@
 
 - Summary cards show unit in the title as `(mm)`.
 - Summary card unit text below the value is hidden to keep the top information row narrow.
+- CG T1 starts on the second summary row; CG T2 follows it.
 - Fixed support information displays A/V1/V2, and displays T1/T2 when the selected machine has CG points.
 
 ## FSG-2300 Grind1
