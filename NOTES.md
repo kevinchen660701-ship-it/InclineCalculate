@@ -43,8 +43,8 @@
 - V1/V2 distance: `207.846 mm`
 - S1 wheel diameter: `304 mm`
 - S1 wheel radius: `152 mm`
-- Previous S1 wheel center before 2026-07-13 correction: `X -152.000, Y +152.000`
-- S1 wheel center used in drawing/calculation: `X -103.923, Y +103.923`
+- Previous S1 wheel center before latest 2026-07-13 correction: `X -103.923, Y +103.923`
+- S1 wheel center used in drawing/calculation: `X -100.5321, Y +113.000`
 
 ### FSG-2300 Grind1 CG T1/T2 Points
 
