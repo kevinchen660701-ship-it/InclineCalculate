@@ -543,11 +543,15 @@
       const cgText = (machine.cgPoints || [])
         .map(point => `<strong>${point.label}</strong>=${pointText(point)}`)
         .join(" / ");
+      const s1Text = selectedModelKey() === "fsg2300" && machine.s1Wheel
+        ? `<strong>S1圓心</strong>=${pointText(machine.s1Wheel)}`
+        : "";
       document.getElementById("supportGeometry").innerHTML =
         `<strong>A</strong>=${pointText(machine.A)} / ` +
         `<strong>V1</strong>=${pointText(machine.V1)} / ` +
         `<strong>V2</strong>=${pointText(machine.V2)}` +
-        `${cgText ? ` / ${cgText}` : ""}，PCD R${fmt(machine.supportRadius, 3)}，V1/V2 距離 ${fmt(machine.supportDistance, 3)} mm。`;
+        `${cgText ? ` / ${cgText}` : ""}` +
+        `${s1Text ? ` / ${s1Text}` : ""}，PCD R${fmt(machine.supportRadius, 3)}，V1/V2 距離 ${fmt(machine.supportDistance, 3)} mm。`;
     }
 
     function num(id) {
