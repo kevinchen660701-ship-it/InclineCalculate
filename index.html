@@ -543,7 +543,7 @@
       const cgText = (machine.cgPoints || [])
         .map(point => `<strong>${point.label}</strong>=${pointText(point)}`)
         .join(" / ");
-      const s1Text = selectedModelKey() === "fsg2300" && machine.s1Wheel
+      const s1Text = machine.s1Wheel
         ? `<strong>S1圓心</strong>=${pointText(machine.s1Wheel)}`
         : "";
       document.getElementById("supportGeometry").innerHTML =
