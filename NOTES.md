@@ -66,8 +66,8 @@ Source drawing: `FSG-2300 G1CG相對Chuck圓心距離.jpg`
 - V1/V2 distance: `207.846 mm`
 - S1 wheel diameter: `304 mm`
 - S1 wheel radius: `152 mm`
-- S1 wheel center used in drawing/calculation: `X +107.480, Y +107.480`
-- This center keeps the S1 wheel arc passing through chuck center `(0, 0)` with radius `152 mm`, using a 135 degree intermediate direction between the last two visual trials.
+- Previous S1 wheel center before latest 2026-07-13 correction: `X +107.480, Y +107.480`
+- S1 wheel center used in drawing/calculation: `X +100.5321, Y +113.000`
 - CG T1: `X -58.888, Y -148.000`
 - CG T2: `X -58.888, Y -128.000`
 
